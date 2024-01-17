@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Installs Ningx Web Server if not installed and Configures it to server web static contents
+# Install Ningx Web Server and Configures it to server web static contents
 
 if ! dpkg -l | grep -q 'nginx' ; then
 	sudo apt-get update
