@@ -4,9 +4,9 @@ Fabric script to generate archive for web_static contents for
 deployment.
 """
 
-from fabric.api import local
-from datetime import datetime
 import os
+from datetime import datetime
+from fabric.api import local
 
 
 def do_pack():

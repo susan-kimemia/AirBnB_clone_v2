@@ -2,9 +2,9 @@
 """
 Deploys archive to remote server.
 """
-from fabric.api import put, run, env, local
-from datetime import datetime
 import os
+from datetime import datetime
+from fabric.api import put, run, env, local
 
 env.hosts = ['18.234.253.75', '54.174.123.116']
 

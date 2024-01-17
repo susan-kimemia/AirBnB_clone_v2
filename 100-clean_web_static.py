@@ -7,8 +7,8 @@ Time: 22:33
 """
 
 import os
-from fabric.api import run, local, env
 from datetime import datetime
+from fabric.api import run, local, env
 
 env.hosts = ['18.234.253.75', '54.174.123.116']
 

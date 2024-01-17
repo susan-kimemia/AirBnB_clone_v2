@@ -3,8 +3,8 @@
 Deploys archive to remote server.
 """
 
-from fabric.api import put, run, env
 import os
+from fabric.api import put, run, env
 
 env.hosts = ['18.234.253.75', '54.174.123.116']
 env.user = 'ubuntu'
