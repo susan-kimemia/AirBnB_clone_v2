@@ -1,82 +1,63 @@
-# Configures an Nginx server to server static contents
-
-$html = @("EOF")
+# Setup the web servers for the deployment of web_static
+exec { '/usr/bin/env sudo apt-get -y update' : }
+-> package { 'nginx':
+  ensure => installed,
+}
+-> file { '/data':
+  ensure  => 'directory'
+}
+-> file { '/data/web_static':
+  ensure => 'directory'
+}
+-> file { '/data/web_static/releases':
+  ensure => 'directory'
+}
+-> file { '/data/web_static/releases/test':
+  ensure => 'directory'
+}
+-> file { '/data/web_static/shared':
+  ensure => 'directory'
+}
+-> file { '/data/web_static/releases/test/index.html':
+  ensure  => 'present',
+  content => "<!DOCTYPE html>
 <html>
   <head>
   </head>
   <body>
-    Holberton School
+    <p>Holberton School</p>
   </body>
-</html>
-EOF
-
-$config_content = @("EOF")
-server {
-    listen 80 default_server;
-    loaction /hbnb_static/ {
-        alias /data/web_static/current/;
-	index index.html;
-    }
-	
-    location / {
-	root /data/web_static/current/;
-	index index.html;
-	try_files \$uri \$uri/ =404;
-    }
-    listen [::]:80;
+</html>"
 }
-EOF
-
-package { 'nginx':
-  ensure   => installed,
-  provider => 'apt',
+-> file { '/data/web_static/current':
+  ensure => 'link',
+  target => '/data/web_static/releases/test'
 }
-
-file { '/data/' :
-  ensure => directory,
-  owner  => 'ubuntu',
-  group  => 'ubuntu',
+-> exec { 'chown -R ubuntu:ubuntu /data/':
+  path => '/usr/bin/:/usr/local/bin/:/bin/'
 }
-
-file { '/data/web_static/':
-  ensure =>  directory,
-  owner  => 'ubuntu',
-  group  => 'ubuntu',
+-> file { '/var/www':
+  ensure => 'directory'
 }
-
-file { '/data/web_static/releases/':
-  ensure =>  directory,
-  owner  => 'ubuntu',
-  group  => 'ubuntu',
+-> file { '/var/www/html':
+  ensure => 'directory'
 }
-
-file { '/data/web_static/shared':
-  ensure =>  directory,
-  owner  => 'ubuntu',
-  group  => 'ubuntu',
+-> file { '/var/www/html/index.html':
+  ensure  => 'present',
+  content => "<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <p>Holberton School</p>
+  </body>
+</html>"
 }
-
-file { '/data/web_static/releases/test/':
-  ensure =>  directory,
-  owner  => 'ubuntu',
-  group  => 'ubuntu',
+exec { 'nginx_conf':
+  environment => ['data=\ \tlocation /hbnb_static {\n\t\talias /data/web_static/current;\n\t}\n'],
+  command     => 'sed -i "39i $data" /etc/nginx/sites-enabled/default',
+  path        => '/usr/bin:/usr/sbin:/bin:/usr/local/bin'
 }
-
-file { '/data/web_static/current':
-  ensure =>  link,
-  owner  => 'ubuntu',
-  group  => 'ubuntu',
-  target => '/data/web_static/releases/test/',
-}
-
-file { '/data/web_static/releases/test/index.html' :
-  ensure  =>  file,
-  owner   => 'ubuntu',
-  group   => 'ubuntu',
-  content => $html,
-}
-
-file { '/etc/nginx/sites-available/default' :
-  ensure  => present,
-  content => $config_content,
+-> service { 'nginx':
+  ensure => running,
 }
