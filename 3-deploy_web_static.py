@@ -5,7 +5,7 @@ from fabric.api import *
 from os.path import exists
 from time import strftime
 
-env.hosts = ["100.25.17.77", "100.24.242.170"]
+env.hosts = ["52.87.220.53", "54.164.186.231"]
 env.user = "ubuntu"
 env.key_filename = '~/.ssh/0-RSA_key'
 
