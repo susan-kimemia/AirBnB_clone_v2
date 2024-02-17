@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-"""This module defines a class to manage file storage for hbnb clone"""
 import json
 from models.base_model import BaseModel
 from models.user import User
@@ -24,12 +23,13 @@ class FileStorage:
         """Returns a dictionary of models currently in storage"""
 
         if not cls:
-            return FileStorage.__objects
+            cls_dict = FileStorage.__objects
 
-        cls_dict = {}
-        for k, v in FileStorage.__objects.items():
-            if cls.__name__ in k:
-                cls_dict.update({k: v.to_dict()})
+        else:
+            cls_dict = {}
+            for k, v in FileStorage.__objects.items():
+                if cls.__name__ in k:
+                    cls_dict.update({k: cls(**v.to_dict())})
 
         return cls_dict
 
@@ -66,3 +66,8 @@ class FileStorage:
             obj_key = obj.to_dict()['__class__'] + '.' + obj.id
             if obj_key in FileStorage.__objects.keys():
                 del FileStorage.__objects[obj_key]
+
+    def close(self):
+        """ Closes Storage session """
+
+        self.reload()
